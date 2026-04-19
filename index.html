@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Lead Engine — Real Estate CRM</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0c;--s1:#141414;--s2:#1c1c1c;--s3:#252525;
+  --b1:#2c2c2c;--b2:#383838;
+  --tx:#f0ece6;--mu:#68635e;--mu2:#908a84;
+  --gold:#c8a45c;--golddim:rgba(200,164,92,.12);
+  --green:#3a9e70;--amber:#d48c0a;--red:#d45f5f;--blue:#5a9fd4;--purple:#9b6dff;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:13px;line-height:1.5}
+a{color:inherit;text-decoration:none}button,input,select,textarea{font-family:'Inter',sans-serif}
+input,select,textarea{color:var(--tx);background:var(--s3);border:1px solid var(--b1);border-radius:6px;outline:none;font-size:12px;transition:border .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+#hdr{position:sticky;top:0;z-index:200;background:var(--s1);border-bottom:1px solid var(--b1);height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+.logo{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold);letter-spacing:1px}
+.hdr-r{display:flex;gap:6px;align-items:center}
+#stats{background:var(--s1);border-bottom:1px solid var(--b1);display:flex;overflow-x:auto}
+.stat{padding:10px 16px;display:flex;flex-direction:column;gap:2px;border-right:1px solid var(--b1);cursor:pointer;transition:background .12s;flex-shrink:0}
+.stat:hover{background:var(--s2)}.stat-n{font-family:'Playfair Display',serif;font-size:20px;line-height:1}.stat-l{font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+#pipe{background:var(--s1);border-bottom:1px solid var(--b1);padding:8px 20px;display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.pl{font-size:9px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-right:4px}
+.pb{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;border:1px solid var(--b2);font-size:11px;font-weight:600;cursor:pointer;background:transparent;color:var(--mu);transition:all .12s}
+.pb:hover{border-color:var(--gold);color:var(--gold)}.pb.on{background:var(--golddim);border-color:rgba(200,164,92,.5);color:var(--gold)}
+.pc{font-size:9px;background:var(--b1);color:var(--mu);border-radius:8px;padding:0 5px}.pb.on .pc{background:rgba(200,164,92,.2);color:var(--gold)}
+#bulk{display:none;background:#1a1500;border-bottom:1px solid rgba(200,164,92,.25);padding:7px 20px;align-items:center;gap:8px}
+#bulk.on{display:flex}.blt{font-size:11px;font-weight:700;color:var(--gold)}
+#tb{padding:12px 20px 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sw{position:relative;flex:1;max-width:270px}.sw span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--mu);pointer-events:none}
+.sw input{width:100%;padding:7px 11px 7px 27px}#tb select{padding:7px 10px}
+.mla{margin-left:auto;display:flex;gap:5px}
+#sl{padding:0 20px;height:27px;display:flex;align-items:center;gap:6px;font-size:10px;color:var(--mu)}
+.sd{width:5px;height:5px;border-radius:50%;background:var(--b2);flex-shrink:0}.sd.on{background:var(--green);animation:pls 1.2s ease infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.2}}
+#grid{padding:12px 20px 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.card{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:15px;cursor:pointer;position:relative;transition:all .18s;overflow:hidden}
+.card:hover{border-color:var(--b2);box-shadow:0 4px 24px rgba(0,0,0,.4);transform:translateY(-1px)}
+.card.sel{border-color:rgba(200,164,92,.55);box-shadow:0 0 0 1.5px rgba(200,164,92,.2)}
+.cbar{position:absolute;top:0;left:0;right:0;height:2px;border-radius:10px 10px 0 0}
+.cst{position:absolute;top:12px;right:32px;font-size:11px}
+.ccb{position:absolute;top:10px;right:11px;width:15px;height:15px;border:1.5px solid var(--b2);border-radius:3px;background:transparent;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--gold);cursor:pointer;z-index:2;transition:all .12s}
+.card.sel .ccb{border-color:var(--gold);background:var(--golddim)}
+.ctop{display:flex;gap:10px;margin-bottom:10px}
+.av{width:35px;height:35px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;flex-shrink:0;border:1px solid}
+.ci{flex:1;min-width:0}.cn{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cl{font-size:11px;color:var(--mu);margin-top:1px}
+.sw2{text-align:center;flex-shrink:0;padding-right:18px}.sn2{font-family:'Playfair Display',serif;font-size:18px;line-height:1}.sl2{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--mu)}
+.sbg{height:2px;background:var(--b1);border-radius:2px;margin-bottom:10px;overflow:hidden}.sbb{height:100%;border-radius:2px;transition:width .4s}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;padding:2px 6px;border-radius:12px;font-size:9px;font-weight:600;border:1px solid var(--b1);color:var(--mu)}
+.chip.on{border-color:var(--b2);color:var(--tx);background:var(--s3)}
+.empty{grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--mu)}
+.empty h2{font-family:'Playfair Display',serif;font-size:22px;color:var(--tx);margin:14px 0 8px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
+.ov.open{opacity:1;pointer-events:all}
+.modal{background:var(--s1);border-radius:12px;width:100%;max-width:580px;max-height:91vh;overflow-y:auto;border:1px solid var(--b2);box-shadow:0 32px 80px rgba(0,0,0,.7);transform:translateY(12px);transition:transform .22s}
+.ov.open .modal{transform:none}
+.mh{padding:20px 20px 0;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.mt{font-family:'Playfair Display',serif;font-size:20px}.ms{font-size:11px;color:var(--mu);margin-top:3px;display:flex;align-items:center;gap:6px}
+.mx{width:28px;height:28px;border-radius:50%;border:1px solid var(--b2);background:var(--s3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--mu);flex-shrink:0;transition:all .12s}
+.mx:hover{background:var(--b1);color:var(--tx)}
+.tabs{display:flex;border-bottom:1px solid var(--b1);margin:0 20px 16px}
+.tab{padding:7px 14px;font-size:10px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);transition:all .12s;letter-spacing:.06em;text-transform:uppercase}
+.tab.on{border-bottom-color:var(--gold);color:var(--gold)}
+.mb{padding:0 20px 20px}
+.sect{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--mu);font-weight:700;margin:16px 0 9px}
+.scb{display:flex;align-items:center;gap:12px;padding:13px;background:var(--s2);border-radius:8px;border:1px solid var(--b1);margin-bottom:12px}
+.bsc{font-family:'Playfair Display',serif;font-size:30px;line-height:1}
+.sbg2{flex:1;height:4px;background:var(--b1);border-radius:4px;overflow:hidden}.sbf{height:100%;border-radius:4px;transition:width .4s}
+.sumbox{background:var(--s2);padding:11px 13px;border-radius:7px;border-left:3px solid var(--b2);font-size:12px;line-height:1.7;color:#c8c4be;margin-bottom:4px}
+.ccg{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.cc{padding:10px 12px;background:var(--s2);border:1px solid var(--b1);border-radius:7px}
+.ccl{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--mu);font-weight:700;margin-bottom:3px}
+.ccv{font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ccv a{color:var(--gold)}.ccv a:hover{text-decoration:underline}
+.cc.em .ccv{color:var(--mu);font-weight:400}
+.slinks{display:flex;flex-wrap:wrap;gap:6px}
+.slink{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid var(--b2);border-radius:6px;font-size:10px;font-weight:700;color:var(--mu);letter-spacing:.04em;transition:all .12s}
+.slink:hover{border-color:var(--gold);color:var(--gold)}
+.ai-info{background:#1a1400;border:1px solid rgba(200,164,92,.3);border-radius:8px;padding:12px 13px;font-size:11px;color:var(--gold);line-height:1.65;margin-bottom:14px}
+.ai-res{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:13px;font-size:12px;line-height:1.75;color:#c8c4be;white-space:pre-wrap;max-height:250px;overflow-y:auto;margin-top:9px}
+.ai-res.gl{border-left:3px solid var(--gold)}.ai-res.pl{border-left:3px solid var(--purple)}
+.subj{padding:5px 10px;background:var(--s3);border:1px solid var(--b1);border-radius:5px;font-size:11px;color:#c8c4be;margin-bottom:4px;cursor:pointer;transition:border .12s}
+.subj:hover{border-color:var(--gold)}
+.ai-err{padding:9px 12px;background:#1e0808;border:1px solid rgba(212,95,95,.3);border-radius:7px;font-size:11px;color:var(--red);margin-top:8px;line-height:1.6}
+.nta{width:100%;padding:9px 11px;border-radius:6px;resize:vertical;min-height:70px;font-size:13px}
+.acti{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--b1);font-size:11px}.acti:last-child{border-bottom:none}
+.abadge{padding:2px 7px;border-radius:10px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0}
+#panel{position:fixed;top:0;right:0;bottom:0;width:355px;background:var(--s1);border-left:1px solid var(--b1);box-shadow:-4px 0 30px rgba(0,0,0,.5);z-index:150;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s}
+#panel.open{transform:none}
+.ph{padding:15px 18px 13px;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.pt{font-size:13px;font-weight:700}.pb3{flex:1;overflow-y:auto;padding:18px}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.fl{font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--mu)}
+.fg input,.fg select,.fg textarea{padding:8px 11px;width:100%}
+.fr{display:flex;gap:8px}.fr .fg{flex:1}
+.fh{font-size:10px;color:var(--mu);margin-top:2px;line-height:1.5}
+.hr{height:1px;background:var(--b1);margin:16px 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 13px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--b2);background:transparent;color:var(--mu);transition:all .14s}
+.btn:hover{border-color:var(--b2);color:var(--tx)}.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-gold{background:var(--golddim);border-color:rgba(200,164,92,.45);color:var(--gold)}.btn-gold:hover{background:rgba(200,164,92,.2)}
+.btn-w{width:100%}.btn-d{color:var(--red);border-color:rgba(212,95,95,.3)}.btn-d:hover{background:rgba(212,95,95,.1)}
+.spin{width:11px;height:11px;border:1.5px solid var(--b2);border-top-color:var(--gold);border-radius:50%;animation:spin .5s linear infinite;display:inline-block;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+#toast{position:fixed;bottom:18px;right:18px;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.4);z-index:999;max-width:290px;transform:translateY(60px);opacity:0;transition:all .22s;border:1px solid;pointer-events:none}
+#toast.show{transform:none;opacity:1}
+#toast.ok{background:#0d2218;border-color:#1a4a2a;color:var(--green)}
+#toast.err{background:#2a0a0a;border-color:#4a1a1a;color:var(--red)}
+#toast.info{background:#0a1a2a;border-color:#1a2a4a;color:var(--blue)}
+#toast.ai{background:#1a0a28;border-color:#2a1a4a;color:var(--purple)}
+#toast.def{background:var(--s2);border-color:var(--b2);color:var(--tx)}
+@media(max-width:640px){#hdr,#stats,#pipe,#tb,#grid,#sl,#bulk{padding-left:14px;padding-right:14px}#panel{width:100%}.ccg{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="hdr">
+  <div class="logo">LEAD ENGINE</div>
+  <div class="hdr-r">
+    <button class="btn btn-sm" onclick="openPanel('import')">📥 Import</button>
+    <button class="btn btn-sm" onclick="exportCSV()">📤 Export</button>
+    <button class="btn btn-sm" onclick="openPanel('settings')">⚙ Settings</button>
+    <button class="btn btn-sm" onclick="openPanel('add')">+ Add Lead</button>
+    <button class="btn btn-gold btn-sm" id="scbtn" onclick="doScrape()">▶ Scrape Now</button>
+  </div>
+</div>
+<div id="stats">
+  <div class="stat" onclick="setF('all')"><span class="stat-n" id="s-t">0</span><span class="stat-l">Total</span></div>
+  <div class="stat" onclick="setF('new')"><span class="stat-n" id="s-nw">0</span><span class="stat-l">New</span></div>
+  <div class="stat" onclick="setF('contacted')"><span class="stat-n" id="s-ct">0</span><span class="stat-l">Contacted</span></div>
+  <div class="stat" onclick="setF('qualified')"><span class="stat-n" id="s-ql" style="color:var(--amber)">0</span><span class="stat-l">Qualified</span></div>
+  <div class="stat" onclick="setF('converted')"><span class="stat-n" id="s-cv" style="color:var(--green)">0</span><span class="stat-l">Converted</span></div>
+  <div class="stat"><span class="stat-n" id="s-em">0</span><span class="stat-l">With Email</span></div>
+  <div class="stat"><span class="stat-n" id="s-av" style="color:var(--gold)">0</span><span class="stat-l">Avg Score</span></div>
+</div>
+<div id="pipe">
+  <span class="pl">Status</span>
+  <button class="pb on" data-s="all" onclick="setF('all')">All <span class="pc" id="p-all">0</span></button>
+  <button class="pb" data-s="new" onclick="setF('new')">◆ New <span class="pc" id="p-new">0</span></button>
+  <button class="pb" data-s="contacted" onclick="setF('contacted')">◎ Contacted <span class="pc" id="p-cnt">0</span></button>
+  <button class="pb" data-s="qualified" onclick="setF('qualified')">★ Qualified <span class="pc" id="p-ql">0</span></button>
+  <button class="pb" data-s="converted" onclick="setF('converted')">✦ Converted <span class="pc" id="p-cv">0</span></button>
+  <button class="pb" data-s="archived" onclick="setF('archived')">▪ Archived <span class="pc" id="p-ar">0</span></button>
+</div>
+<div id="bulk">
+  <span class="blt" id="blt">0 selected</span>
+  <select id="bls" style="padding:4px 8px;font-size:11px;border-radius:5px">
+    <option value="">Move to…</option>
+    <option value="new">New</option><option value="contacted">Contacted</option>
+    <option value="qualified">Qualified</option><option value="converted">Converted</option><option value="archived">Archived</option>
+  </select>
+  <button class="btn btn-sm" onclick="bulkSt()">Apply</button>
+  <button class="btn btn-sm btn-d" onclick="bulkDel()">🗑 Delete</button>
+  <button class="btn btn-sm" onclick="clrSel()">✕ Clear</button>
+</div>
+<div id="tb">
+  <div class="sw"><span>⌕</span><input id="q" placeholder="Search name, city, state, email…" oninput="deb()"/></div>
+  <select id="scf" onchange="render()"><option value="">All scores</option><option value="8">🔥 Hot (8–10)</option><option value="5">🌡 Warm (5–7)</option><option value="1">❄ Cold (1–4)</option></select>
+  <select id="stf" onchange="render()"><option value="">All states</option></select>
+  <div class="mla"><button class="btn btn-sm" onclick="selAll()">☑</button><button class="btn btn-sm" onclick="clrSel()">☐</button></div>
+</div>
+<div id="sl"><div class="sd" id="sdot"></div><span id="stxt">Loading…</span></div>
+<div id="grid"></div>
+<div class="ov" id="pov" onclick="if(event.target===this)closePr()"><div class="modal" id="pm"></div></div>
+<div id="panel"><div class="ph"><span class="pt" id="ptitle"></span><button class="mx" onclick="closePanel()">✕</button></div><div class="pb3" id="pbody"></div></div>
+<div id="toast"></div>
+<script>
+const SEED=[
+  {id:1,name:"Sandra K. Williams",email:"sandra@williamshomestx.com",phone:"(713) 448-2901",city:"Houston",state:"TX",website:"https://williamshomestx.com",linkedin:"https://linkedin.com/in/sandrawilliamstx",youtube:null,instagram:null,score:9,status:"qualified",notes:"Responded — interested in referral program",source:"yellowpages.com/houston-tx",created:"2026-04-10"},
+  {id:2,name:"Marcus DeLeon",email:null,phone:"(214) 772-3345",city:"Dallas",state:"TX",website:"https://deleonrealty.com",youtube:"https://youtube.com/@marcusdeleon",linkedin:null,instagram:null,score:7,status:"contacted",notes:"Left voicemail 4/14",source:"yelp.com/dallas",created:"2026-04-11"},
+  {id:3,name:"Priya Nair",email:"priya@nairealty.com",phone:"(480) 901-2233",city:"Scottsdale",state:"AZ",website:"https://nairealty.com",instagram:"https://instagram.com/priyanairealty",linkedin:null,youtube:null,score:9,status:"qualified",notes:"Books luxury buyer leads fast",source:"bhgre.com/az/scottsdale",created:"2026-04-11"},
+  {id:4,name:"James Okonkwo",email:"james@okonkwoproperties.com",phone:"(404) 551-7890",city:"Atlanta",state:"GA",website:"https://okonkwoproperties.com",youtube:"https://youtube.com/@jamesokonkwo",linkedin:"https://linkedin.com/in/jamesokonkwo",instagram:null,score:10,status:"converted",notes:"Signed referral agreement",source:"yellowpages.com/atlanta-ga",created:"2026-04-09"},
+  {id:5,name:"Tanya Reeves",email:null,phone:"(702) 229-4411",city:"Las Vegas",state:"NV",website:"https://reeveslvhomes.com",youtube:null,linkedin:null,instagram:null,score:5,status:"archived",notes:"Retired from real estate",source:"yelp.com/las-vegas",created:"2026-04-08"},
+  {id:6,name:"Christopher Amaro",email:"chris@amaromiami.com",phone:"(305) 876-0023",city:"Miami",state:"FL",website:"https://amaromiami.com",instagram:"https://instagram.com/chrisamarorealty",linkedin:null,youtube:null,score:9,status:"new",notes:null,source:"yellowpages.com/miami-fl",created:"2026-04-12"},
+  {id:7,name:"Destiny Fowler",email:"destiny@fowlerdenver.com",phone:"(720) 338-8801",city:"Denver",state:"CO",website:"https://fowlerdenver.com",youtube:"https://youtube.com/@destinyfowler",linkedin:"https://linkedin.com/in/destinyfowler",instagram:"https://instagram.com/fowlerdenverhomes",score:10,status:"new",notes:null,source:"yellowpages.com/denver-co",created:"2026-04-12"},
+  {id:8,name:"Rafael Gutierrez",email:null,phone:"(210) 644-9201",city:"San Antonio",state:"TX",website:"https://gutierrezsahomes.com",linkedin:"https://linkedin.com/in/rafaelgutierrez",youtube:null,instagram:null,score:6,status:"new",notes:null,source:"yelp.com/san-antonio",created:"2026-04-13"},
+  {id:9,name:"Angela Burnett",email:"angela@burnettcltrealty.com",phone:"(704) 592-3310",city:"Charlotte",state:"NC",website:"https://burnettcltrealty.com",instagram:"https://instagram.com/burnettcltrealty",linkedin:null,youtube:null,score:9,status:"new",notes:null,source:"manta.com/charlotte-nc",created:"2026-04-13"},
+  {id:10,name:"Devon Ashworth",email:"devon@ashworthphx.com",phone:"(602) 813-0044",city:"Phoenix",state:"AZ",website:"https://ashworthphx.com",youtube:"https://youtube.com/@devonashworth",linkedin:"https://linkedin.com/in/devonashworth",instagram:"https://instagram.com/ashworthphx",score:10,status:"new",notes:null,source:"yellowpages.com/phoenix-az",created:"2026-04-14"},
+  {id:11,name:"Monica Tran",email:"monica@transeattlehomes.com",phone:"(206) 712-5580",city:"Seattle",state:"WA",website:"https://transeattlehomes.com",linkedin:"https://linkedin.com/in/monicatranrealty",youtube:null,instagram:null,score:9,status:"new",notes:null,source:"yelp.com/seattle-wa",created:"2026-04-14"},
+  {id:12,name:"Kwame Johnson",email:null,phone:"(312) 988-3320",city:"Chicago",state:"IL",website:"https://kwamehomeschicago.com",youtube:"https://youtube.com/@kwamejohnson",instagram:"https://instagram.com/kwamechicago",linkedin:null,score:8,status:"contacted",notes:"Left voicemail 4/15",source:"yellowpages.com/chicago-il",created:"2026-04-14"},
+  {id:13,name:"Rachel Kim",email:"rachel@kimhomesnashville.com",phone:"(615) 244-7780",city:"Nashville",state:"TN",website:"https://kimhomesnashville.com",linkedin:"https://linkedin.com/in/rachelkimrealty",instagram:"https://instagram.com/rachelkimnashville",youtube:null,score:10,status:"new",notes:null,source:"bhgre.com/tn/nashville",created:"2026-04-15"},
+  {id:14,name:"Tony Marcelo",email:null,phone:"(503) 847-0910",city:"Portland",state:"OR",website:"https://marceloportlandhomes.com",youtube:"https://youtube.com/@tonymarcelo",linkedin:null,instagram:null,score:7,status:"new",notes:null,source:"century21.com/or/portland",created:"2026-04-15"},
+  {id:15,name:"Brianna Wells",email:"bri@wellsraleighhomes.com",phone:"(919) 300-4420",city:"Raleigh",state:"NC",website:"https://wellsraleighhomes.com",youtube:"https://youtube.com/@briannawells",linkedin:"https://linkedin.com/in/briannawells",instagram:"https://instagram.com/wellsraleigh",score:10,status:"new",notes:null,source:"yellowpages.com/raleigh-nc",created:"2026-04-15"}
+];
+const SC={new:{icon:"◆",color:"#68635e"},contacted:{icon:"◎",color:"#5a9fd4"},qualified:{icon:"★",color:"#d48c0a"},converted:{icon:"✦",color:"#3a9e70"},archived:{icon:"▪",color:"#444"}};
+const scC=s=>s>=7?"#3a9e70":s>=4?"#d48c0a":"#68635e";
+let leads=[],sel=new Set(),cf="all",dbt,prl=null,ptab="overview",nid=100,acts={};
+function save(){try{localStorage.setItem("rle3",JSON.stringify({leads,acts}));}catch{}}
+function load(){try{const d=JSON.parse(localStorage.getItem("rle3")||"{}");if(d.leads?.length){leads=d.leads;nid=Math.max(...leads.map(l=>l.id))+1;}else leads=JSON.parse(JSON.stringify(SEED));acts=d.acts||{};}catch{leads=JSON.parse(JSON.stringify(SEED));}}
+function calcSc(l){let s=0;if(l.email)s+=3;if(l.phone)s+=3;if(l.website)s+=2;s+=Math.min([l.youtube,l.linkedin,l.instagram].filter(Boolean).length,2);if(l.youtube)s+=1;return Math.min(10,s);}
+function autoSum(l){const loc=[l.city,l.state].filter(Boolean).join(", ");const sigs=[l.email&&"email",l.phone&&"phone",l.website&&"website",l.youtube&&"YouTube",l.linkedin&&"LinkedIn",l.instagram&&"Instagram"].filter(Boolean);const sc=l.score||0;return`${loc?`Agent based in ${loc}.`:"Real estate professional."} ${sigs.length?`Contact: ${sigs.join(", ")}.`:""} ${sc>=8?"Strong online presence.":sc>=5?"Moderate presence.":"Basic contact info."}`.trim();}
+function ini(n){return n?n.trim().split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase():"?";}
+function esc(s){return s?String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"):""}
+function updStats(){
+  const bs={};Object.keys(SC).forEach(k=>bs[k]=leads.filter(l=>l.status===k).length);
+  document.getElementById("s-t").textContent=leads.length;
+  document.getElementById("s-em").textContent=leads.filter(l=>l.email).length;
+  document.getElementById("s-av").textContent=leads.length?(leads.reduce((a,l)=>a+(l.score||0),0)/leads.length).toFixed(1):0;
+  [["s-nw","new"],["s-ct","contacted"],["s-ql","qualified"],["s-cv","converted"]].forEach(([id,k])=>{const e=document.getElementById(id);if(e)e.textContent=bs[k]||0;});
+  [["p-all",leads.length],["p-new",bs.new||0],["p-cnt",bs.contacted||0],["p-ql",bs.qualified||0],["p-cv",bs.converted||0],["p-ar",bs.archived||0]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v;});
+  const states=[...new Set(leads.map(l=>l.state).filter(Boolean))].sort();
+  const sf=document.getElementById("stf"),cur=sf.value;sf.innerHTML='<option value="">All states</option>';
+  states.forEach(s=>{const o=document.createElement("option");o.value=s;o.textContent=s;sf.appendChild(o);});sf.value=cur;
+}
+function getVis(){
+  const q=document.getElementById("q").value.toLowerCase();
+  const scf=document.getElementById("scf").value;
+  const stf=document.getElementById("stf").value;
+  return leads.filter(l=>{
+    if(cf!=="all"&&l.status!==cf)return false;
+    if(q&&!`${l.name} ${l.city||""} ${l.state||""} ${l.email||""}`.toLowerCase().includes(q))return false;
+    if(scf==="8"&&(l.score||0)<8)return false;
+    if(scf==="5"&&((l.score||0)<5||(l.score||0)>=8))return false;
+    if(scf==="1"&&(l.score||0)>=5)return false;
+    if(stf&&l.state!==stf)return false;
+    return true;
+  });
+}
+function setF(s){cf=s;document.querySelectorAll(".pb").forEach(b=>b.classList.toggle("on",b.dataset.s===s));render();}
+function deb(){clearTimeout(dbt);dbt=setTimeout(render,250);}
+function render(){
+  updStats();const g=document.getElementById("grid");const vis=getVis();
+  document.getElementById("stxt").textContent=`Showing ${vis.length} of ${leads.length} leads`;
+  if(!vis.length){g.innerHTML=`<div class="empty"><div style="font-size:40px;opacity:.2">⌂</div><h2>No leads found</h2><p style="font-size:12px;margin-bottom:18px">Click <strong style="color:var(--gold)">▶ Scrape Now</strong> to pull agents from public directories.</p><button class="btn btn-gold" onclick="doScrape()">▶ Start Scraping</button></div>`;return;}
+  g.innerHTML=vis.map(l=>{
+    const sc=l.score||0,isSel=sel.has(l.id),st=SC[l.status]||SC.new,col=scC(sc);
+    return`<div class="card${isSel?" sel":""}" id="c${l.id}" onclick="openPr(${l.id})"><div class="cbar" style="background:${col}"></div><div class="cst" style="color:${st.color}">${st.icon}</div><div class="ccb" onclick="event.stopPropagation();togSel(${l.id})">${isSel?"✓":""}</div><div class="ctop"><div class="av" style="background:${col}18;border-color:${col}30;color:${col}">${ini(l.name)}</div><div class="ci"><div class="cn">${esc(l.name)}</div><div class="cl">${[l.city,l.state].filter(Boolean).join(", ")||"Unknown"}</div></div><div class="sw2"><div class="sn2" style="color:${col}">${sc}</div><div class="sl2">score</div></div></div><div class="sbg"><div class="sbb" style="width:${sc*10}%;background:${col}"></div></div><div class="chips"><span class="chip${l.email?" on":""}">✉</span><span class="chip${l.phone?" on":""}">☎</span><span class="chip${l.website?" on":""}">⊕</span>${l.youtube?'<span class="chip on">▶</span>':""}${l.linkedin?'<span class="chip on">in</span>':""}${l.instagram?'<span class="chip on">◉</span>':""}></div></div>`;
+  }).join("");
+}
+function togSel(id){sel.has(id)?sel.delete(id):sel.add(id);const c=document.getElementById("c"+id);if(c){c.classList.toggle("sel",sel.has(id));const cb=c.querySelector(".ccb");if(cb)cb.textContent=sel.has(id)?"✓":"";}updBulk();}
+function selAll(){getVis().forEach(l=>sel.add(l.id));render();updBulk();}
+function clrSel(){sel.clear();render();updBulk();}
+function updBulk(){const n=sel.size;document.getElementById("bulk").classList.toggle("on",n>0);document.getElementById("blt").textContent=n+" lead"+(n!==1?"s":"")+" selected";}
+function bulkSt(){const s=document.getElementById("bls").value;if(!s)return;sel.forEach(id=>{const l=leads.find(x=>x.id===id);if(l)l.status=s;});toast(sel.size+" leads → "+s,"ok");clrSel();save();}
+function bulkDel(){if(!confirm("Delete "+sel.size+" lead(s)?"))return;leads=leads.filter(l=>!sel.has(l.id));toast(sel.size+" deleted");clrSel();save();render();}
+async function doScrape(){
+  const btn=document.getElementById("scbtn");btn.disabled=true;btn.innerHTML='<span class="spin"></span> Scraping…';
+  document.getElementById("sdot").classList.add("on");document.getElementById("stxt").textContent="Scanning public directories…";
+  toast("Scanning real estate directories…","info");
+  const city=document.getElementById("cfg-city")?.value||"Houston";
+  const state=document.getElementById("cfg-state")?.value||"TX";
+  try{
+    const r=await fetch("/api/scrape",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({city,state})});
+    const data=await r.json();
+    let added=0;
+    if(data.success&&data.leads?.length){
+      data.leads.forEach(raw=>{
+        if(!raw.name||leads.some(l=>l.name.toLowerCase()===raw.name.toLowerCase()))return;
+        const lead={...raw,id:nid++,score:calcSc(raw),status:"new",notes:null,summary:autoSum({...raw,score:calcSc(raw)}),created:new Date().toISOString().slice(0,10)};
+        leads.unshift(lead);acts[lead.id]=[];added++;
+      });
+    }
+    save();render();toast(added>0?`✓ Found ${added} new lead${added!==1?"s":""}`:data.error||"No new leads found",added>0?"ok":"");
+  }catch(e){toast("Scrape error: "+e.message,"err");}
+  btn.disabled=false;btn.innerHTML="▶ Scrape Now";document.getElementById("sdot").classList.remove("on");
+}
+function openPr(id){prl=leads.find(l=>l.id===id);if(!prl)return;ptab="overview";rendPr();document.getElementById("pov").classList.add("open");}
+function closePr(){document.getElementById("pov").classList.remove("open");prl=null;}
+function rendPr(){
+  const l=prl;if(!l)return;
+  const sc=l.score||0,st=SC[l.status]||SC.new,col=scC(sc);
+  const soc=[[l.youtube,"▶ YouTube"],[l.linkedin,"in LinkedIn"],[l.instagram,"◉ Instagram"],[l.source&&"https://"+l.source,"⊕ Source"]].filter(([u])=>u);
+  const a=(acts[l.id]||[]).slice(0,8);
+  document.getElementById("pm").innerHTML=`<div class="mh"><div><div class="mt">${esc(l.name)}</div><div class="ms"><span>${[l.city,l.state].filter(Boolean).join(", ")||"Unknown"}</span>·<span style="color:${st.color}">${st.icon} ${l.status}</span>·<span>Lead #${l.id}</span></div></div><button class="mx" onclick="closePr()">✕</button></div><div class="tabs"><div class="tab${ptab==="overview"?" on":""}" onclick="swTab('overview')">Overview</div><div class="tab${ptab==="ai"?" on":""}" onclick="swTab('ai')">✦ AI Tools</div><div class="tab${ptab==="pipeline"?" on":""}" onclick="swTab('pipeline')">Pipeline</div></div><div class="mb">${ptab==="overview"?`<div class="scb"><div class="bsc" style="color:${col}">${sc}</div><div style="flex:1"><div style="font-size:9px;color:var(--mu);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em">Lead Score / 10</div><div class="sbg2"><div class="sbf" style="width:${sc*10}%;background:${col}"></div></div></div><button class="btn btn-sm" onclick="swTab('ai');setTimeout(()=>callAI('explain'),100)">Why?</button></div>${l.summary?`<div class="sumbox">${esc(l.summary)}</div>`:""}<div class="sect">Contact Information</div><div class="ccg"><div class="cc${l.email?"":" em"}"><div class="ccl">✉ Email</div><div class="ccv">${l.email?`<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>`:"—"}</div></div><div class="cc${l.phone?"":" em"}"><div class="ccl">☎ Phone</div><div class="ccv">${l.phone?`<a href="tel:${esc(l.phone)}">${esc(l.phone)}</a>`:"—"}</div></div><div class="cc${l.website?"":" em"}" style="grid-column:1/-1"><div class="ccl">⊕ Website</div><div class="ccv">${l.website?`<a href="${esc(l.website)}" target="_blank">${esc(l.website)}</a>`:"—"}</div></div></div>${soc.length?`<div class="sect">Links</div><div class="slinks">${soc.map(([u,lb])=>`<a class="slink" href="${esc(u)}" target="_blank">${lb}</a>`).join("")}</div>`:""}<div class="sect">Meta</div><div style="font-size:11px;color:var(--mu);line-height:1.9">Added: ${l.created||"—"} · Source: ${l.source||"—"}</div>`:ptab==="ai"?`<div class="ai-info">✦ AI calls run server-side — your ANTHROPIC_API_KEY stays in Vercel env vars, never exposed to the browser.</div><div class="sect">AI Summary</div><button class="btn btn-gold btn-w" id="ab-sum" onclick="callAI('summary')">✦ Generate AI Summary</button><div id="ao-sum"></div><div class="sect">Score Explanation</div><button class="btn btn-w" id="ab-exp" onclick="callAI('explain')">Explain This Score</button><div id="ao-exp"></div><div class="sect">Outreach Email</div><div style="display:flex;gap:8px;margin-bottom:10px"><input id="sn" placeholder="Your name" style="flex:1;padding:7px 10px"/><input id="sco" placeholder="Your company" style="flex:1;padding:7px 10px"/></div><button class="btn btn-gold btn-w" id="ab-out" onclick="callAI('outreach')">✦ Generate Outreach Email</button><div id="ao-out"></div><div class="sect">Subject Lines</div><button class="btn btn-w" id="ab-subj" onclick="callAI('subject')">✦ Generate Subject Lines</button><div id="ao-subj"></div>`:ptab==="pipeline"?`<div class="sect">Pipeline Status</div><select class="nta" style="height:auto;padding:8px 11px;margin-bottom:14px" onchange="updSt(this.value)">${Object.entries(SC).map(([k,v])=>`<option value="${k}"${l.status===k?" selected":""}>${v.icon} ${k.charAt(0).toUpperCase()+k.slice(1)}</option>`).join("")}</select><div class="sect">Notes</div><textarea class="nta" id="nta" rows="4">${esc(l.notes||"")}</textarea><div style="display:flex;gap:8px;margin-top:10px"><button class="btn" style="flex:1" onclick="saveNotes()">💾 Save Notes</button><button class="btn btn-d" onclick="delPr()">🗑 Delete</button></div>${a.length?`<div class="sect">Activity</div>${a.map(x=>`<div class="acti"><span class="abadge" style="background:${x.type==="outreach"?"#0a1020":x.type==="status"?"#081508":"#1a1400"};color:${x.type==="outreach"?"var(--blue)":x.type==="status"?"var(--green)":"var(--gold)"}">${x.type||"note"}</span><span style="color:#c8c4be;flex:1">${esc(x.detail)}</span><span style="color:var(--mu);font-size:10px;flex-shrink:0">${new Date(x.ts).toLocaleDateString()}</span></div>`).join("")}`:""}`:""}></div>`;
+}
+function swTab(t){ptab=t;rendPr();}
+function updSt(s){if(!prl)return;prl.status=s;const l=leads.find(x=>x.id===prl.id);if(l)l.status=s;logAct(prl.id,"status","Status → "+s);save();render();toast("Status: "+s,"ok");}
+function saveNotes(){if(!prl)return;const n=document.getElementById("nta")?.value||"";prl.notes=n;const l=leads.find(x=>x.id===prl.id);if(l)l.notes=n;logAct(prl.id,"note",n.slice(0,60));save();toast("Notes saved","ok");}
+function delPr(){if(!prl||!confirm("Delete this lead?"))return;leads=leads.filter(l=>l.id!==prl.id);save();render();closePr();toast("Lead deleted");}
+function logAct(id,type,detail){if(!acts[id])acts[id]=[];acts[id].unshift({type,detail,ts:new Date().toISOString()});acts[id]=acts[id].slice(0,30);save();}
+async function callAI(type){
+  const l=prl;if(!l)return;
+  const keys={summary:"sum",explain:"exp",outreach:"out",subject:"subj"};
+  const out=document.getElementById("ao-"+keys[type]);
+  const btn=document.getElementById("ab-"+keys[type]);
+  if(!btn||!out)return;
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Generating…';out.innerHTML="";
+  try{
+    const body={type,lead:l,sender_name:document.getElementById("sn")?.value,sender_company:document.getElementById("sco")?.value};
+    const r=await fetch("/api/ai",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const data=await r.json();
+    if(!data.success)throw new Error(data.error||"AI request failed");
+    const text=data.text;
+    if(type==="summary"){out.innerHTML=`<div class="ai-res gl">${esc(text)}</div>`;l.summary=text;const ld=leads.find(x=>x.id===l.id);if(ld)ld.summary=text;save();toast("AI summary updated","ai");}
+    else if(type==="explain"){out.innerHTML=`<div class="ai-res pl">${esc(text)}</div>`;}
+    else if(type==="outreach"){logAct(l.id,"outreach","Outreach email generated");out.innerHTML=`<div class="ai-res">${esc(text)}</div><div style="display:flex;gap:7px;margin-top:9px"><button class="btn btn-sm" onclick="navigator.clipboard.writeText(${JSON.stringify(text)});toast('Copied!','ok')">📋 Copy</button>${l.email?`<button class="btn btn-sm" onclick="window.open('mailto:${l.email}?body='+encodeURIComponent(${JSON.stringify(text)}))">📧 Open in Email</button>`:""}</div>`;toast("Email ready","ai");}
+    else if(type==="subject"){out.innerHTML=text.split("\n").filter(Boolean).map(s=>`<div class="subj" onclick="navigator.clipboard.writeText('${s.replace(/'/g,"\\'")}');toast('Copied!','ok')">${esc(s)}</div>`).join("");}
+  }catch(e){out.innerHTML=`<div class="ai-err">⚠ ${esc(e.message)}</div>`;toast("AI error","err");}
+  const labels={summary:"✦ Generate AI Summary",explain:"Explain This Score",outreach:"✦ Generate Outreach Email",subject:"✦ Generate Subject Lines"};
+  if(btn){btn.disabled=false;btn.innerHTML=labels[type];}
+}
+function submitAdd(){
+  const g=id=>document.getElementById(id)?.value?.trim()||null;
+  const name=g("fn");if(!name){toast("Name is required","err");return;}
+  const lead={id:nid++,name,email:g("fe"),phone:g("fp"),city:g("fc"),state:(g("fs")||"").toUpperCase(),website:g("fw"),linkedin:g("fli"),youtube:g("fyt"),instagram:g("fig"),source:g("fso")||"Manual Entry",status:"new",notes:null,created:new Date().toISOString().slice(0,10)};
+  lead.score=calcSc(lead);lead.summary=autoSum(lead);leads.unshift(lead);acts[lead.id]=[];save();render();closePanel();toast("Lead added","ok");
+}
+function exportCSV(){
+  const h=["id","name","email","phone","city","state","website","linkedin","youtube","instagram","score","status","notes","source","created"];
+  const rows=getVis().map(l=>h.map(k=>{const v=l[k]||"";return v.toString().includes(",")?`"${v}"`:v;}).join(","));
+  const blob=new Blob([[h.join(","),...rows].join("\n")],{type:"text/csv"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`leads-${new Date().toISOString().slice(0,10)}.csv`;a.click();toast("CSV exported","ok");
+}
+function openPanel(t){
+  document.getElementById("panel").classList.add("open");
+  document.getElementById("ptitle").textContent={add:"+ Add Lead",settings:"⚙ Settings",import:"📥 Import / API Info"}[t]||"";
+  const b=document.getElementById("pbody");
+  if(t==="add"){b.innerHTML=`${[["Name *","fn","text"],["Email","fe","email"],["Phone","fp","tel"],["Website","fw","url"],["LinkedIn URL","fli","url"],["YouTube URL","fyt","url"],["Instagram URL","fig","url"]].map(([l,id,tp])=>`<div class="fg"><label class="fl">${l}</label><input type="${tp}" id="${id}"/></div>`).join("")}<div class="fr"><div class="fg"><label class="fl">City</label><input id="fc"/></div><div class="fg" style="max-width:70px"><label class="fl">State</label><input id="fs" maxlength="2" placeholder="TX"/></div></div><div class="fg"><label class="fl">Source</label><input id="fso" placeholder="Where found?"/></div><button class="btn btn-gold btn-w" style="margin-top:6px" onclick="submitAdd()">Add Lead</button>`;}
+  else if(t==="settings"){b.innerHTML=`<div class="fg"><label class="fl">Scrape City</label><input id="cfg-city" placeholder="Houston" value="Houston"/></div><div class="fg"><label class="fl">Scrape State</label><input id="cfg-state" placeholder="TX" maxlength="2" value="TX" style="max-width:80px"/></div><button class="btn btn-gold btn-w" onclick="closePanel();doScrape()">▶ Scrape This City Now</button><div class="hr"></div><button class="btn btn-d btn-w btn-sm" onclick="if(confirm('Reset all leads to defaults?')){leads=JSON.parse(JSON.stringify(SEED));acts={};nid=100;save();render();closePanel();toast('Data reset');}">🗑 Reset All Data</button>`;}
+  else if(t==="import"){b.innerHTML=`<div style="background:#1a1400;border:1px solid rgba(200,164,92,.3);border-radius:8px;padding:12px;font-size:11px;color:var(--gold);line-height:1.7;margin-bottom:16px">✦ AI runs server-side on Vercel. Your ANTHROPIC_API_KEY is in environment variables — never sent to the browser.</div><div class="fl" style="margin-bottom:7px">POST /api/ai</div><div style="background:var(--s3);padding:10px 12px;border-radius:6px;font-family:monospace;font-size:10px;line-height:1.9;color:#aaa;margin-bottom:14px">{"type":"summary|explain|outreach|subject","lead":{...}}</div><div class="fl" style="margin-bottom:7px">POST /api/scrape</div><div style="background:var(--s3);padding:10px 12px;border-radius:6px;font-family:monospace;font-size:10px;line-height:1.9;color:#aaa">{"city":"Houston","state":"TX"}</div>`;}
+}
+function closePanel(){document.getElementById("panel").classList.remove("open");}
+function toast(msg,type="def"){const t=document.getElementById("toast");t.textContent=msg;t.className="show "+type;clearTimeout(t._t);t._t=setTimeout(()=>t.className="",3200);}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closePr();closePanel();}});
+load();render();
+</script>
+</body>
+</html>
